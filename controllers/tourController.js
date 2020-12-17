@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+// Read File
 const toursPath = path.join(
   __dirname,
   '..',
@@ -10,7 +11,29 @@ const toursPath = path.join(
 );
 const tours = JSON.parse(fs.readFileSync(toursPath));
 
+// Sanity check
+exports.checkID = (req, res, next, val) => {
+  const id = val;
+  if (id > tours.length || id < 0) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+  }
+  next();
+};
 
+exports.checkBody=(req,res,next)=>{
+  if(!req.body.name || !req.body.price){
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Missing name or price',
+    });
+  }
+  next();
+}
+
+// HTTP Methods
 exports.getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -22,13 +45,6 @@ exports.getAllTours = (req, res) => {
 exports.getTour = (req, res) => {
   const id = req.params.id * 1;
 
-  if (id > tours.length || id < 0) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
-
   const tour = tours.find((el) => el.id === id);
   res.status(200).json({
     status: 'success',
@@ -39,13 +55,6 @@ exports.getTour = (req, res) => {
 exports.updateTour = (req, res) => {
   const id = req.params.id * 1;
 
-  if (id > tours.length || id < 0) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
-
   res.status(200).json({
     status: 'success',
     data: '<updated data here>',
@@ -54,13 +63,6 @@ exports.updateTour = (req, res) => {
 
 exports.deleteTour = (req, res) => {
   const id = req.params.id * 1;
-
-  if (id > tours.length || id < 0) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
 
   res.status(204).json({
     status: 'success',
