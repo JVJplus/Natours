@@ -4,10 +4,12 @@ const baseRouter=require('./routes/baseRoutes')
 const tourRouter=require('./routes/tourRoutes')
 const userRouter=require('./routes/userRoutes')
 
-
 const app = express();
 // MiddleWares
-app.use(morgan('dev'));
+if(process.env.NODE_ENV=='development'){
+    app.use(morgan('dev'));
+}
+
 // For Getting JSON POST datas
 app.use(express.json());
 
