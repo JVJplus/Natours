@@ -1,14 +1,32 @@
 const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+const app = require('./app');
 
 dotenv.config({
   path: './config.env'
 });
-// console.log(process.env);
 
-const app = require('./app');
+const DB = process.env.DATABASE.replace(
+  '<PASSWORD>',
+  process.env.DATABASE_PASSWORD
+);
+
+try {
+  mongoose
+    .connect(DB, {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+      useUnifiedTopology: true
+    })
+    .then(() => {
+      console.log('DB connection successful!');
+    });
+} catch (err) {
+  console.log(err);
+}
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Listening to port: ${port}...`);
+  console.log(`App running on port: ${port}...`);
 });
